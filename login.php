@@ -34,6 +34,7 @@ require_once('config.php');
     <?php
         require_once('nav.php');
     ?>
+    
 
     <main class="form-signin w-100 m-auto">
         <form action="login_db.php" method="POST">

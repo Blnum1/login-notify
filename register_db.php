@@ -10,6 +10,7 @@ if (isset($_POST['signup'])) {
     $c_password = $_POST['c_password'];
     $urole = 'user';
 
+    // ตรวจสอบข้อมูลที่ป้อนเข้ามา
     if (empty($firstname)) {
         $_SESSION["error"] = "กรุณากรอกชื่อ!";
         header("location: register.php");
@@ -44,16 +45,17 @@ if (isset($_POST['signup'])) {
         exit();
     } else {
         try {
+            // ตรวจสอบอีเมลในฐานข้อมูล
             $check_email = $conn->prepare("SELECT email FROM users WHERE email = :email");
             $check_email->bindParam(":email", $email);
             $check_email->execute();
-            $row = $check_email->fetch(PDO::FETCH_ASSOC);
 
-            if ($row && $row['email'] == $email) {
-                $_SESSION['warning'] = "มีอีเมลนี้อยู่ในระบบแล้ว <a href='login.php' class='alert-link'> คลิ๊กที่นี่</a> เพื่อเข้าสู่ระบบ";
+            if ($check_email->rowCount() > 0) {
+                $_SESSION['warning'] = "มีอีเมลนี้อยู่ในระบบแล้ว <a href='login.php' class='alert-link'>คลิ๊กที่นี่</a> เพื่อเข้าสู่ระบบ";
                 header("location: register.php");
                 exit();
             } else {
+                // แฮชรหัสผ่านและบันทึกข้อมูลผู้ใช้
                 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $conn->prepare("INSERT INTO users (firstname, lastname, email, password, urole) VALUES (:firstname, :lastname, :email, :password, :urole)");
                 $stmt->bindParam(":firstname", $firstname);
